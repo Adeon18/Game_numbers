@@ -14,3 +14,15 @@ CYAN = (104, 243, 243)
 WIDTH = 800
 HEIGHT = 800
 FPS = 60
+TITLE = "Tilemap Demo"
+BGCOLOR = BROWN
+# The size of a tile(helps when creating a map)
+TILESIZE = 64
+GRIDWIDTH = WIDTH / TILESIZE
+GRIDHEIGHT = HEIGHT / TILESIZE
+
+PLAYER_IMG = 'player.png'
+PLAYER_LAYER = 1
+PLAYER_HEALTH = 5
+PLAYER_ROT_SPEED = 250  # Deg per sec
+PLAYER_SPEED = 300

@@ -1,10 +1,12 @@
 # The base skeleton for any big python project
 
 import sys
+import os
 
 import pygame
 
 from settings import *
+from sprites import *
 
 class Program:
     def __init__(self):
@@ -15,12 +17,20 @@ class Program:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
         self.running = True  # If this var is true - the game runs
+
+        pygame.display.set_caption(TITLE)
+        self.clock = pygame.time.Clock()
         self.load_data()
 
     def load_data(self):
         '''
         This function is responsible for loading data
         '''
+        game_folder = os.path.dirname(__file__)
+        img_folder = os.path.join(game_folder, 'img')
+
+        self.player_image = pygame.image.load(os.path.join(img_folder, PLAYER_IMG)).convert_alpha()
+
         # This is for paused screen
         self.dim_screen = pygame.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0, 0, 0, 180))
@@ -32,8 +42,11 @@ class Program:
         '''
         # Start the program
         self.all_sprites = pygame.sprite.LayeredUpdates()
+        # For now a player spawns at set position
+        self.player = Player(self, 200, 200)
 
         self.paused = False
+        self.draw_debug = False
 
         self.run()
 
@@ -57,6 +70,7 @@ class Program:
             self.dt = self.clock.tick(FPS) / 1000.0  # fix for Python 2.x
             # Here we check for events and whether we quit
             self.events()
+            # Pause stops the game loop
             if not self.paused:
                 self.update()
             self.draw()
@@ -85,6 +99,9 @@ class Program:
                 # Check for pausing the game
                 if event.key == pygame.K_p:
                     self.paused = not self.paused
+                # Toggle the debug mode
+                if event.key == pygame.K_F3:
+                    self.draw_debug = not self.draw_debug
 
 
     def draw(self):
@@ -92,11 +109,18 @@ class Program:
         Here we draw everything that is needed
         '''
 
-        self.screen.fill(BROWN)
+        self.screen.fill(BGCOLOR)
+        self.all_sprites.draw(self.screen)
         # Dim the screen if paused
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))
             self.draw_text('Paused', 105, RED, WIDTH / 2, HEIGHT / 2)
+        # Debug mode
+        if self.draw_debug:
+            # This just draws the collision rectangle when you press F3
+            for sprite in self.all_sprites:
+                pygame.draw.rect(self.screen, CYAN, sprite.rect, 1)
+            self.draw_text("{:.2f}".format(self.clock.get_fps()), 25, CYAN, WIDTH / 2, 30)
         pygame.display.flip()
 
 
