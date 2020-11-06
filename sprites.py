@@ -41,21 +41,15 @@ class Player(pygame.sprite.Sprite):
         '''
         Main player properties, takes our game class, position
         '''
-        self._layer = PLAYER_LAYER
         self.groups = game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        # Define player's image, rectangle and his rect_center
-        self.image = self.game.player_image
+        self.image = game.player_image
         self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-
-        # self.hit_rect = PLAYER_HIT_RECT
-        # self.hit_rect.center = self.rect.center
-
-        # Player move properties
+        self.hit_rect = PLAYER_HIT_RECT
+        self.hit_rect.center = self.rect.center
         self.vel = vec(0, 0)
-        self.pos = vec(x, y)
+        self.pos = vec(x, y) * TILESIZE
         # Rotation property
         self.rot = 0
         self.health = PLAYER_HEALTH
@@ -84,26 +78,47 @@ class Player(pygame.sprite.Sprite):
         Same update as in the game loop
         '''
         self.get_keys()
-
-        # The image has to be set
-        self.image = self.game.player_image
-        # Constantly get the image rectangle and apply the position
-        self.rect = self.image.get_rect()
-        self.rect.center = self.pos
-
-        # Get the rotation degrees and player image state(This is pretty complicated)
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
-        self.image = pygame.transform.rotate(self.image, self.rot)
-
-        # Do the same code(Becouse we rotated)
+        self.image = pygame.transform.rotate(self.game.player_image, self.rot)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
-        # Apply movement
         self.pos += self.vel * self.game.dt
 
-        # Check for collisions and apply position(for later)
-        self.rect.centerx = self.pos.x
-        # collide_with_walls(self, self.game.walls, 'x')
-        self.rect.centery = self.pos.y
-        # collide_with_walls(self, self.game.walls, 'y')
-        self.rect.center = self.rect.center
+        self.hit_rect.centerx = self.pos.x
+        collide_with_walls(self, self.game.walls, 'x')
+        self.hit_rect.centery = self.pos.y
+        collide_with_walls(self, self.game.walls, 'y')
+        self.rect.center = self.hit_rect.center
+
+
+class Wall(pygame.sprite.Sprite):
+    def __init__(self, game, x: int, y: int):
+        '''
+        Main player properties, takes our game class, position
+        '''
+        self._layer = BOX_LAYER
+        self.groups = game.all_sprites, game.walls
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = self.game.wall_image
+        self.image = pygame.transform.scale(self.image, (48, 48))
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = self.x * TILESIZE
+        self.rect.y = self.y * TILESIZE
+
+
+class Key(Wall):
+    def __init__(self, game, x: int, y: int):
+        '''
+        Main player properties, takes our game class, position
+        '''
+        Wall.__init__(self, game, x, y)
+        self.image = self.game.key_image
+
+    def collisionEvent(self):
+        ''' Collision handling happens here '''
+        pass
+
+    

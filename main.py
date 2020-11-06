@@ -7,6 +7,8 @@ import pygame
 
 from settings import *
 from sprites import *
+from map_handler import *
+
 
 class Program:
     def __init__(self):
@@ -28,8 +30,13 @@ class Program:
         '''
         game_folder = os.path.dirname(__file__)
         img_folder = os.path.join(game_folder, 'img')
+        map_folder = os.path.join(game_folder, 'maps')
+
+        self.map = Map(os.path.join(map_folder, 'map1.txt'))
 
         self.player_image = pygame.image.load(os.path.join(img_folder, PLAYER_IMG)).convert_alpha()
+        self.wall_image = pygame.image.load(os.path.join(img_folder, BOX_IMG)).convert_alpha()
+        self.key_image = pygame.image.load(os.path.join(img_folder, KEY_IMG)).convert_alpha()
 
         # This is for paused screen
         self.dim_screen = pygame.Surface(self.screen.get_size()).convert_alpha()
@@ -42,8 +49,20 @@ class Program:
         '''
         # Start the program
         self.all_sprites = pygame.sprite.LayeredUpdates()
+        self.walls = pygame.sprite.LayeredUpdates()
+        self.keys = pygame.sprite.LayeredUpdates()
         # For now a player spawns at set position
-        self.player = Player(self, 200, 200)
+        for row, tiles in enumerate(self.map.data):
+            for col, tile in enumerate(tiles):
+                if tile == 'W':
+                    Wall(self, col, row)
+                if tile == 'K':
+                    Key(self, col, row)
+                if tile == 'P':
+                    self.player = Player(self, col, row)
+
+        self.wall = Wall(self, 3, 3)
+        self.key = Key(self, 3, 4)
 
         self.paused = False
         self.draw_debug = False
