@@ -8,14 +8,15 @@ class Gameplay():
     def __init__(self, mode = 'std'):
         ''' Initializes the game '''
 
-        self.current_boss_xp = BOSS_XP
-        self.current_egg_xp = EGG_XP
-        self.mode = mode
         self.current_difficulty = 1
         self.eggs_found = 0
         self.eggs_total = 5
         self.xp = 10
         self.keys = 0
+        self.current_boss_xp = BOSS_XP
+        self.current_egg_xp = EGG_XP
+        self.mode = mode
+
 
     def changexp(self, delta):
         ''' Changes player's xp by a given delta '''

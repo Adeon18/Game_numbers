@@ -37,6 +37,7 @@ class Program:
         self.player_image = pygame.image.load(os.path.join(img_folder, PLAYER_IMG)).convert_alpha()
         self.wall_image = pygame.image.load(os.path.join(img_folder, BOX_IMG)).convert_alpha()
         self.key_image = pygame.image.load(os.path.join(img_folder, KEY_IMG)).convert_alpha()
+        self.chest_image = pygame.image.load(os.path.join(img_folder, CHEST_IMG)).convert_alpha()
 
         # This is for paused screen
         self.dim_screen = pygame.Surface(self.screen.get_size()).convert_alpha()
@@ -49,8 +50,9 @@ class Program:
         '''
         # Start the program
         self.all_sprites = pygame.sprite.LayeredUpdates()
-        self.walls = pygame.sprite.LayeredUpdates()
-        self.keys = pygame.sprite.LayeredUpdates()
+        self.walls = pygame.sprite.Group()
+        self.keys = pygame.sprite.Group()
+        self.chests = pygame.sprite.Group()
         # For now a player spawns at set position
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
@@ -60,9 +62,8 @@ class Program:
                     Key(self, col, row)
                 if tile == 'P':
                     self.player = Player(self, col, row)
-
-        self.wall = Wall(self, 3, 3)
-        self.key = Key(self, 3, 4)
+                if tile == 'C':
+                    Chest(self, col, row)
 
         self.paused = False
         self.draw_debug = False

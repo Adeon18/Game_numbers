@@ -36,6 +36,11 @@ BOX_LAYER = 2
 KEY_IMG = 'key.png'
 KEY_LAYER = 2
 
+CHEST_IMG = 'chest.png'
+
 
 BOSS_XP = 15
 EGG_XP = 5
+
+BOB_RANGE = 5
+BOB_SPEED = 0.25

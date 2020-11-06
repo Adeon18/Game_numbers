@@ -1,6 +1,6 @@
 
 import random
-
+import pytweening
 import pygame
 
 from settings import *
@@ -109,16 +109,54 @@ class Wall(pygame.sprite.Sprite):
         self.rect.y = self.y * TILESIZE
 
 
-class Key(Wall):
+class Key(pygame.sprite.Sprite):
     def __init__(self, game, x: int, y: int):
         '''
         Main player properties, takes our game class, position
         '''
-        Wall.__init__(self, game, x, y)
+        self._layer = BOX_LAYER
+        self.groups = game.all_sprites, game.keys
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
         self.image = self.game.key_image
+        self.image = pygame.transform.scale(self.image, (32, 32))
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = self.x * TILESIZE
+        self.rect.y = self.y * TILESIZE
+        self.pos = (self.rect.x, self.rect.y)
 
-    def collisionEvent(self):
-        ''' Collision handling happens here '''
-        pass
+        # self.tween = pytweening.easeInOutSine
+        # self.dir = 1
+        # self.step = 0
+
+    # def update(self):
+    #     # Bobbing motion
+    #     offset = BOB_RANGE * (self.tween(self.step / BOB_RANGE) - 0.5)
+    #     self.rect.top = self.pos[0] + offset * self.dir
+    #     self.step += BOB_SPEED
+    #     if self.step > BOB_RANGE:
+    #         self.step = 0
+    #         self.dir *= -1
+
+
+class Chest(pygame.sprite.Sprite):
+    def __init__(self, game, x: int, y: int):
+        '''
+        Main player properties, takes our game class, position
+        '''
+        self._layer = BOX_LAYER
+        self.groups = game.all_sprites, game.chests
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = self.game.chest_image
+        self.image = pygame.transform.scale(self.image, (40, 40))
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = self.x * TILESIZE
+        self.rect.y = self.y * TILESIZE
+
 
     
