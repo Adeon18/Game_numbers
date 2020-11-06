@@ -7,7 +7,9 @@ import pygame
 
 from settings import *
 from sprites import *
+from number_functions import *
 from map_handler import *
+from game_core import *
 
 
 class Program:
@@ -51,8 +53,8 @@ class Program:
         # Start the program
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.walls = pygame.sprite.Group()
-        self.keys = pygame.sprite.Group()
-        self.chests = pygame.sprite.Group()
+        self.keys_group = pygame.sprite.Group()
+        self.eggs = pygame.sprite.Group()
         # For now a player spawns at set position
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
@@ -64,6 +66,13 @@ class Program:
                     self.player = Player(self, col, row)
                 if tile == 'C':
                     Chest(self, col, row)
+
+        self.current_egg_xp = EGG_XP
+        #self.mode = mode
+        #self.current_difficulty = 1
+        self.eggs_found = 0
+        self.xp = 10
+        self.keys = 0
 
         self.paused = False
         self.draw_debug = False
@@ -102,6 +111,24 @@ class Program:
         '''
         self.all_sprites.update()
 
+        # Collision with eggs
+        hits = pygame.sprite.spritecollide(self.player, self.eggs, False)
+        for hit in hits:
+            if self.keys >= 1:
+                if self.question('rand'):
+                    self.player.health += 1
+                    self.eggs_found += 1
+                else:
+                    self.player.health -= 1
+                self.keys -= 1
+                hit.kill()
+
+        # Collision with keys
+        hits = pygame.sprite.spritecollide(self.player, self.keys_group, False)
+        for hit in hits:
+            self.keys += 1
+            hit.kill()
+
 
 
     def events(self):
@@ -131,6 +158,7 @@ class Program:
 
         self.screen.fill(BGCOLOR)
         self.all_sprites.draw(self.screen)
+        self.draw_hud()
         # Dim the screen if paused
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))
@@ -142,6 +170,27 @@ class Program:
                 pygame.draw.rect(self.screen, CYAN, sprite.rect, 1)
             self.draw_text("{:.2f}".format(self.clock.get_fps()), 25, CYAN, WIDTH / 2, 30)
         pygame.display.flip()
+
+    def wait_for_key(self):
+        pygame.event.wait()
+        waiting = True
+        key = ''
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_y:
+                        key = 'yes'
+                        waiting = False
+                    if event.key == pygame.K_n:
+                        key = 'no'
+                        waiting = False
+
+        return key
+
 
 
     def show_start_screen(self):
@@ -161,7 +210,7 @@ class Program:
         '''
         Draws text at specified position and aligned specifically(nw - north west, etc.)
         '''
-        font = pygame.font.SysFont('Arial', size)
+        font = pygame.font.SysFont('Comic sans ms', size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
         if align == "nw":
@@ -183,6 +232,57 @@ class Program:
         if align == "center":
             text_rect.center = (x, y)
         self.screen.blit(text_surface, text_rect)
+
+
+    def question(self, diff_level='std'):
+        ''' Asks player a question of a given difficulty '''
+
+        if diff_level == 'rand':
+            funcs = {'Ulam': ulam_number, 'happy': happy_number, 'prime': prime_number}
+            randint = random.choice(range(100))
+            rand_number_type = random.choice(list(funcs.keys()))
+            print('Question: is', randint, 'a', rand_number_type, 'number?')
+            expected_answer = 'yes' if funcs[rand_number_type](randint) else 'no'
+            print('Expected answer:', expected_answer)
+        else:
+            return None
+
+        answer = self.wait_for_key()
+
+        if answer == expected_answer:
+            print('Correct! XP increased')
+            return True
+        else:
+            print('Wrong! XP decreased')
+            return False
+
+
+    def draw_hud(self):
+        bg_rect = pygame.Rect(0, 0, 200, 70)
+        bg_rect_outline = pygame.Rect(0, 0, 200, 70)
+        pygame.draw.rect(self.screen, LIGHTGREY, bg_rect)
+        pygame.draw.rect(self.screen, BLACK, bg_rect_outline, 3)
+        self.draw_player_health(5, 10, self.player.health / 10)
+        self.draw_text('Keys: {}'.format(self.keys), 20, BLACK, 10, 35, align='nw')
+
+
+    def draw_player_health(self, x, y, pct):
+        if pct < 0:
+            pct = 0
+        BAR_LENGTH = 110
+        BAR_HEIGHT = 25
+        fill = pct * BAR_LENGTH
+        outline_rect = pygame.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
+        fill_rect = (x, y, fill, BAR_HEIGHT)
+        if pct > 0.6:
+            col = GREEN
+        elif pct > 0.3:
+            col = YELLOW
+        else:
+            col = RED
+        pygame.draw.rect(self.screen, col, fill_rect)
+        pygame.draw.rect(self.screen, BLACK, outline_rect, 3)
+        self.draw_text('health', 20, BLACK, outline_rect.centerx, outline_rect.centery + 3)
 
 
 # Start the program

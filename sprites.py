@@ -77,6 +77,8 @@ class Player(pygame.sprite.Sprite):
         '''
         Same update as in the game loop
         '''
+        if self.health > 10:
+            self.health = 10
         self.get_keys()
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
         self.image = pygame.transform.rotate(self.game.player_image, self.rot)
@@ -115,7 +117,7 @@ class Key(pygame.sprite.Sprite):
         Main player properties, takes our game class, position
         '''
         self._layer = BOX_LAYER
-        self.groups = game.all_sprites, game.keys
+        self.groups = game.all_sprites, game.keys_group
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = self.game.key_image
@@ -147,7 +149,7 @@ class Chest(pygame.sprite.Sprite):
         Main player properties, takes our game class, position
         '''
         self._layer = BOX_LAYER
-        self.groups = game.all_sprites, game.chests
+        self.groups = game.all_sprites, game.eggs
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = self.game.chest_image
@@ -157,6 +159,5 @@ class Chest(pygame.sprite.Sprite):
         self.y = y
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
+        self.pos = (self.rect.x, self.rect.y)
 
-
-    
