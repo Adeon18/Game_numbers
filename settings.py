@@ -1,3 +1,7 @@
+'''
+This module contains all of the game settings
+'''
+
 import pygame
 
 
@@ -17,30 +21,31 @@ WIDTH = 1200
 HEIGHT = 960
 FPS = 60
 TITLE = "Tilemap Demo"
-BGCOLOR = BROWN
+BGCOLOR = (39, 174, 96)
 # The size of a tile(helps when creating a map)
 TILESIZE = 48
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
+# Player settings
 PLAYER_IMG = 'player.png'
 PLAYER_HIT_RECT = pygame.Rect(0, 0, 35, 35)
-PLAYER_LAYER = 1
+PLAYER_LAYER = 2
 PLAYER_HEALTH = 5
+PLAYER_HEALTH_MAX = 10
 PLAYER_ROT_SPEED = 250  # Deg per sec
 PLAYER_SPEED = 300
 
-BOX_IMG = 'grass.png'
-BOX_LAYER = 2
-
+# Wall settings
+WALL_IMG = 'wall.png'
+WALL_LAYER = 1
+# Boss settings
+BOSS_IMG = 'boss.png'
+# Key settings
 KEY_IMG = 'key.png'
-KEY_LAYER = 2
-
+KEY_LAYER = 1
+# Chest settings
 CHEST_IMG = 'chest.png'
 
-
-BOSS_XP = 15
-EGG_XP = 5
-
-BOB_RANGE = 5
-BOB_SPEED = 0.25
+# BOB_RANGE = 5
+# BOB_SPEED = 0.25
