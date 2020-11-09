@@ -12,6 +12,7 @@ DARKGREY = (40, 40, 40)
 LIGHTGREY = (100, 100, 100)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
+BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 BROWN = (106, 55, 5)
 CYAN = (104, 243, 243)
@@ -36,6 +37,8 @@ PLAYER_HEALTH_MAX = 10
 PLAYER_ROT_SPEED = 250  # Deg per sec
 PLAYER_SPEED = 300
 
+MAX_SECONDS = 20
+
 # Wall settings
 WALL_IMG = 'wall.png'
 WALL_LAYER = 1
@@ -49,3 +52,10 @@ CHEST_IMG = 'chest.png'
 
 # BOB_RANGE = 5
 # BOB_SPEED = 0.25
+
+CANDY_IMG = 'candy.png'
+
+KEY_SOUND = 'key_found.wav'
+CORRECT_SOUND = 'correct_answer.wav'
+WRONG_SOUND = 'wrong_answer.wav'
+

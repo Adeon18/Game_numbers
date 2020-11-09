@@ -134,7 +134,7 @@ class Key(pygame.sprite.Sprite):
         self.game = game
         self.image = self.game.key_image
         # Resize the image to 48x48
-        self.image = pygame.transform.scale(self.image, (32, 32))
+        self.image = pygame.transform.scale(self.image, (48,48))
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -154,6 +154,26 @@ class Key(pygame.sprite.Sprite):
     #     if self.step > BOB_RANGE:
     #         self.step = 0
     #         self.dir *= -1
+
+class Candy(pygame.sprite.Sprite):
+    def __init__(self, game, x: int, y: int):
+        '''
+        Main player properties, takes our game class, position
+        '''
+        self._layer = KEY_LAYER
+        self.groups = game.all_sprites, game.candy_group
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = self.game.candy_image
+        # Resize the image to 48x48
+        self.image = pygame.transform.scale(self.image, (48,48))
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = self.x * TILESIZE
+        self.rect.y = self.y * TILESIZE
+        self.pos = (self.rect.x, self.rect.y)
+
 
 
 class Chest(pygame.sprite.Sprite):
